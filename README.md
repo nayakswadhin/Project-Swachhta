@@ -12,19 +12,15 @@ This project focuses on monitoring the cleanliness of office spaces using AI-pow
 
 ## 📽️ Demo
 
-Watch the demo video to see the system in action:
-
-[![Watch Demo Video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://drive.google.com/file/d/1yWKySUUxQVlHbLUNcixh1JoBWFts1jQb/view?usp=drive_link)
-
-> _Click the image above or [here](https://drive.google.com/file/d/1yWKySUUxQVlHbLUNcixh1JoBWFts1jQb/view?usp=drive_link) to watch the demo video._
+Watch the demo video to see the system in action:  
+[Click here to watch the demo video](https://drive.google.com/file/d/1yWKySUUxQVlHbLUNcixh1JoBWFts1jQb/view?usp=drive_link)
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js, Tailwind CSS
-- **Backend**: Node.js, Express.js
+- **Backend**: Node.js, Express.js, Websocket
 - **AI Model**: TensorFlow, PyTorch, YOLOv5
 - **Visualization**: Power BI
-- **Cloud Services**: Google Cloud Functions, AWS Lambda
 
 ## 🚀 How It Works
 
@@ -53,5 +49,5 @@ The application features a dashboard with interactive Power BI graphs, offering 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/office-cleanliness-monitoring.git
-   cd office-cleanliness-monitoring
+   git clone https://github.com/nayakswadhin/Project-Swachhta.git
+   cd Project-Swachhta
