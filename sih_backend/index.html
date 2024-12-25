@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Detection System</title>
+    <style>
+      :root {
+        --primary: #16a34a;
+        --primary-light: #22c55e;
+        --primary-dark: #15803d;
+        --background: #f0fdf4;
+        --surface: #ffffff;
+        --border: #dcfce7;
+        --text: #14532d;
+        --text-secondary: #166534;
+        --success: #15803d;
+        --error: #dc2626;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+      }
+
+      .container {
+        background-color: var(--surface);
+        padding: 32px;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1),
+          0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+      }
+
+      h1 {
+        color: var(--text);
+        font-size: 2.25rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 1rem;
+      }
+
+      h2 {
+        color: var(--text);
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      h2::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 24px;
+        background-color: var(--primary);
+        border-radius: 2px;
+      }
+
+      .detection-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 32px;
+        margin-top: 32px;
+      }
+
+      .detection-box {
+        background-color: var(--surface);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .detection-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .preview {
+        max-width: 100%;
+        margin: 20px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background-color: var(--background);
+      }
+
+      .preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .result {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .success {
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: var(--success);
+      }
+
+      .error {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: var(--error);
+      }
+
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .result-table th,
+      .result-table td {
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .result-table th {
+        background-color: #f0fdf4;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        background-color: var(--background);
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+      }
+
+      input[type="file"]:hover {
+        border-color: var(--primary-light);
+        background-color: var(--background);
+      }
+
+      .loading {
+        display: none;
+        margin-top: 16px;
+        color: var(--primary);
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 32px;
+        gap: 8px;
+        padding: 4px;
+        background-color: var(--background);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .tab {
+        padding: 12px 24px;
+        background-color: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+      }
+
+      .tab:hover {
+        color: var(--primary);
+        background-color: #dcfce7;
+      }
+
+      .tab.active {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .loading::after {
+        content: "";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-left: 8px;
+        border: 2px solid var(--primary);
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 16px;
+        }
+
+        .container {
+          padding: 24px;
+        }
+
+        h1 {
+          font-size: 1.875rem;
+        }
+
+        .detection-section {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Smart Detection System</h1>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="both">Both Detections</div>
+        <div class="tab" data-tab="bin">Bin Detection</div>
+        <div class="tab" data-tab="object">Object Detection</div>
+      </div>
+
+      <div class="detection-section">
+        <div class="detection-box" id="binDetection">
+          <h2>Bin Detection</h2>
+          <div class="form-group">
+            <input type="file" id="binImageInput" accept="image/*" />
+            <button onclick="detectBin()">Detect Bin</button>
+          </div>
+          <div class="loading" id="binLoading">Processing image...</div>
+          <div class="preview" id="binImagePreview"></div>
+          <div id="binResult"></div>
+        </div>
+
+        <div class="detection-box" id="objectDetection">
+          <h2>Spit Detection</h2>
+          <iframe title="Sih_demo" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiYjNjNDY5ZDgtNTQxZC00OGUzLWIwZGUtYzdmMjRmZWVmYjA0IiwidCI6ImJhZDEyODY0LTkxM2UtNGI5OS04N2Q2LWI4ZDJhZDQ1OWUyNyIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
+          <div class="form-group">
+            <input type="file" id="objectImageInput" accept="image/*" />
+            <button onclick="detectObjects()">Detect Spit</button>
+          </div>
+          <div class="loading" id="objectLoading">Processing image...</div>
+          <div class="preview" id="objectImagePreview"></div>
+          <div id="objectResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Utility functions
+      function compressImage(base64Str) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = base64Str;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 800;
+            const MAX_HEIGHT = 600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            resolve(canvas.toDataURL("image/jpeg", 0.7));
+          };
+        });
+      }
+
+      // Detection Service
+      const DetectionService = {
+        async detectBin(base64Image) {
+          const response = await fetch(
+            "http://localhost:3000/bin-detection/detect",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ image: base64Image }),
+            }
+          );
+          return response.json();
+        },
+
+        async detectObjects(base64Image) {
+          const response = await fetch(
+            "http://localhost:3000/spit-detection/detect",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ image: base64Image }),
+            }
+          );
+          return response.json();
+        },
+      };
+
+      // Result Display
+      const ResultDisplay = {
+        showResult(elementId, message, isSuccess) {
+          const resultDiv = document.getElementById(elementId);
+          resultDiv.className = "result " + (isSuccess ? "success" : "error");
+          resultDiv.innerHTML = message;
+        },
+
+        formatBinResult(result) {
+          if (!result.predictions || result.predictions.length === 0) {
+            return "<p>No bins detected</p>";
+          }
+
+          const binRows = result.predictions
+            .map(
+              (bin) => `
+        <table class="result-table">
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Detected Bin Type</td>
+                <td>${bin.type}</td>
+            </tr>
+            <tr>
+                <td>Confidence</td>
+                <td>${(bin.confidence * 100).toFixed(2)}%</td>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td>X: ${bin.location.x.toFixed(
+                  2
+                )}, Y: ${bin.location.y.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Size</td>
+                <td>W: ${bin.location.width.toFixed(
+                  2
+                )}, H: ${bin.location.height.toFixed(2)}</td>
+            </tr>
+        </table>
+    `
+            )
+            .join("<br>");
+
+          return `
+        <div class="bins-container">
+            <h3>${result.message}</h3>
+            ${binRows}
+        </div>
+    `;
+        },
+
+        formatObjectResult(data) {
+          const result = {
+            dimensions: {
+              width: data.image?.width || 0,
+              height: data.image?.height || 0,
+            },
+            spitDetected: false,
+            confidence: 0,
+          };
+
+          if (data.predictions && data.predictions.length > 0) {
+            const spitPrediction = data.predictions.find(
+              (p) => p.class === "spit"
+            );
+            if (spitPrediction) {
+              result.spitDetected = true;
+              result.confidence = spitPrediction.confidence;
+            }
+          }
+
+          const tableRows = Object.entries(result)
+            .map(
+              ([key, value]) => `
+    <tr>
+        <td>${key}</td>
+        <td>${typeof value === "object" ? JSON.stringify(value) : value}</td>
+    </tr>
+`
+            )
+            .join("");
+
+          return `
+    <table class="result-table">
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        ${tableRows}
+    </table>
+`;
+        },
+      };
+
+      // Image Uploader
+      class ImageUploader {
+        constructor(inputId, previewId, onImageLoaded) {
+          this.input = document.getElementById(inputId);
+          this.preview = document.getElementById(previewId);
+          this.onImageLoaded = onImageLoaded;
+          this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+          this.input.addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = async (e) => {
+                this.preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                const compressedImage = await compressImage(e.target.result);
+                this.onImageLoaded(compressedImage);
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+      }
+
+      // Tab Manager
+      class TabManager {
+        constructor() {
+          this.tabs = document.querySelectorAll(".tab");
+          this.binSection = document.getElementById("binDetection");
+          this.objectSection = document.getElementById("objectDetection");
+          this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+          this.tabs.forEach((tab) => {
+            tab.addEventListener("click", (event) => {
+              this.switchTab(event.target.dataset.tab);
+            });
+          });
+        }
+
+        switchTab(tab) {
+          this.tabs.forEach((t) => t.classList.remove("active"));
+          document.querySelector(`[data-tab="${tab}"]`).classList.add("active");
+
+          switch (tab) {
+            case "bin":
+              this.binSection.style.display = "block";
+              this.objectSection.style.display = "none";
+              break;
+            case "object":
+              this.binSection.style.display = "none";
+              this.objectSection.style.display = "block";
+              break;
+            case "both":
+              this.binSection.style.display = "block";
+              this.objectSection.style.display = "block";
+              break;
+          }
+        }
+      }
+
+      // Global state
+      let binBase64Image = "";
+      let objectBase64Image = "";
+
+      // Initialize components
+      const tabManager = new TabManager();
+
+      new ImageUploader("binImageInput", "binImagePreview", (image) => {
+        binBase64Image = image;
+      });
+
+      new ImageUploader("objectImageInput", "objectImagePreview", (image) => {
+        objectBase64Image = image;
+      });
+
+      // Detection handlers
+      async function detectBin() {
+        if (!binBase64Image) {
+          ResultDisplay.showResult(
+            "binResult",
+            "Please select an image first",
+            false
+          );
+          return;
+        }
+
+        const loading = document.getElementById("binLoading");
+        loading.style.display = "block";
+
+        try {
+          const data = await DetectionService.detectBin(binBase64Image);
+          if (data.success) {
+            ResultDisplay.showResult(
+              "binResult",
+              ResultDisplay.formatBinResult(data.data),
+              true
+            );
+          } else {
+            ResultDisplay.showResult("binResult", data.message, false);
+          }
+        } catch (error) {
+          ResultDisplay.showResult(
+            "binResult",
+            "Error detecting bin: " + error.message,
+            false
+          );
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+
+      async function detectObjects() {
+        if (!objectBase64Image) {
+          ResultDisplay.showResult(
+            "objectResult",
+            "Please select an image first",
+            false
+          );
+          return;
+        }
+
+        const loading = document.getElementById("objectLoading");
+        loading.style.display = "block";
+
+        try {
+          const data = await DetectionService.detectObjects(objectBase64Image);
+          ResultDisplay.showResult(
+            "objectResult",
+            ResultDisplay.formatObjectResult(data),
+            true
+          );
+        } catch (error) {
+          ResultDisplay.showResult(
+            "objectResult",
+            "Error detecting objects: " + error.message,
+            false
+          );
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>

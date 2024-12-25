@@ -1,0 +1,2 @@
+Room_ID,Room_Type,Room_Occupancy,Total_Duration_Seconds,Total_Energy_kWh,Threshold_kWh,Efficiency_Status
+small,working room,medium,8.389830508474576,0.00023305084745762713,0.8,Efficient

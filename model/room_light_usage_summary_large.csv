@@ -1,0 +1,2 @@
+Room_ID,Room_Type,Room_Occupancy,Total_Duration_Seconds,Total_Energy_kWh,Threshold_kWh,Efficiency_Status
+large,break room,large,7.033898305084742,0.00039077212806026346,1.6,Efficient
